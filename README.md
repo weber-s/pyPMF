@@ -35,6 +35,8 @@ package. It then has build in support for ploting :
 Examples
 ========
 
+The [documentation](https://pypmf.readthedocs.io) has a lot of examples and figures, but here is a short summary:
+
 ```python
 from pyPMF.PMF import PMF
 
@@ -42,9 +44,9 @@ pmf = PMF(site="GRE-fr", reader="xlsx", BDIR="./")
 
 # Read various output
 pmf.read.read_base_profiles()
-pmf.read.read_base_contribution()
+pmf.read.read_base_contributions()
 pmf.read.read_constrained_profiles()
-pmf.read.read_constrained_contribution()
+pmf.read.read_constrained_contributions()
 # ... or simply :
 pmf.read.read_all()
 
