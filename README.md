@@ -10,9 +10,6 @@ them.
 
 Currently, only data from the EPA PMF5 is handle, from `xlsx` or sql database output.
 
-* [Usage](usage.md)
-* [API](api.md)
-
 History
 -------
 
@@ -33,4 +30,39 @@ package. It then has build in support for ploting :
  * seasonal contribution
  * contribution of sources to polluted and normal days
  * And a lot more!
+
+
+Examples
+========
+
+```python
+from pyPMF.PMF import PMF
+
+pmf = PMF(site="GRE-fr", reader="xlsx", BDIR="./")
+
+# Read various output
+pmf.read.read_base_profiles()
+pmf.read.read_base_contribution()
+pmf.read.read_constrained_profiles()
+pmf.read.read_constrained_contribution()
+# ... or simply :
+pmf.read.read_all()
+
+# The pmf has now different attributes associated
+pmf.profiles    # name of the different factors
+pmf.species     # name of the different species
+pmf.dfcontrib_c # contribution dataframe of factors
+pmf.dfprofile_c # chemical profile of factors
+# ... and lot more
+
+# plot the results
+pmf.plot.plot_stacked_profiles()
+
+
+# or use some utilities
+pmf.to_cubic_meter(specie="Cu") # Contribution timeserie of the different factors to the Cu
+pmf.to_relative_mass()
+# ... and lot more
+
+```
 
