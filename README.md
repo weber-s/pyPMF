@@ -1,4 +1,4 @@
-[![Documentation Status](https://img.shields.io/badge/Documentation-API-green)](https://webersa.gricad-pages.univ-grenoble-alpes.fr/py4pm/)
+[![Documentation Status](https://img.shields.io/badge/Documentation-API-green)](https://pypmf.readthedocs.io/)
 [![PyPI version](https://badge.fury.io/py/pyPMF.svg)](https://badge.fury.io/py/pyPMF)
 
 
@@ -10,6 +10,8 @@ them.
 
 Currently, only data from the EPA PMF5 is handle, from `xlsx` or sql database output.
 
+* [Usage](usage.md)
+* [API](api.md)
 
 History
 -------
@@ -31,3 +33,4 @@ package. It then has build in support for ploting :
  * seasonal contribution
  * contribution of sources to polluted and normal days
  * And a lot more!
+
