@@ -1,12 +1,6 @@
 from abc import ABC, abstractmethod
 import numpy as np
 import pandas as pd
-from matplotlib.gridspec import GridSpec
-import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
-import matplotlib.colors as mcolors
-import seaborn as sns
-from py4pm.chemutilities import get_sourceColor, get_sourcesCategories, format_ions
 
 XLSX_ENGINE = "xlrd"
 

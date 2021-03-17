@@ -59,15 +59,15 @@ guess), used to convert unit and to be the default variable to plot.
 
 For now, the following readers are implemented :
 
- - [read_metadata](api.html#pyPMF.PMF.ReaderAccessor.read_metadata)
- - [read_base_contributions](api.html#pyPMF.PMF.ReaderAccessor.read_base_contributions)
- - [read_base_profiles](api.html#pyPMF.PMF.ReaderAccessor.read_base_profiles)
- - [read_base_bootstrap](api.html#pyPMF.PMF.ReaderAccessor.read_base_bootstrap)
- - [read_base_uncertainties_summary](api.html#pyPMF.PMF.ReaderAccessor.read_base_uncertainties_summary)
- - [read_constrained_contributions](api.html#pyPMF.PMF.ReaderAccessor.read_constrained_contributions)
- - [read_constrained_profiles](api.html#pyPMF.PMF.ReaderAccessor.read_constrained_profiles)
- - [read_constrained_bootstrap](api.html#pyPMF.PMF.ReaderAccessor.read_constrained_bootstrap)
- - [read_constrained_uncertainties_summary](api.html#pyPMF.PMF.ReaderAccessor.read_constrained_uncertainties_summary)
+ - read_metadata
+ - read_base_contributions
+ - read_base_profiles
+ - read_base_bootstrap
+ - read_base_uncertainties_summary
+ - read_constrained_contributions
+ - read_constrained_profiles
+ - read_constrained_bootstrap
+ - read_constrained_uncertainties_summary
 
 ### Contribution
 
@@ -221,13 +221,15 @@ Plot utilities
 
 For now, the following plotters are implemented :
 
- - [plot_per_microgramm](api.html#pyPMF.PMF.PlotterAccessor.plot_per_microgramm)
- - [plot_totalspeciesum](api.html#pyPMF.PMF.PlotterAccessor.plot_totalspeciesum)
- - [plot_stacked_profiles](api.html#pyPMF.PMF.PlotterAccessor.plot_stacked_profiles)
- - [plot_contrib](api.html#pyPMF.PMF.PlotterAccessor.plot_contrib)
- - [plot_stacked_contribution](api.html#pyPMF.PMF.PlotterAccessor.plot_stacked_contribution)
- - [plot_seasonal_contribution](api.html#pyPMF.PMF.PlotterAccessor.plot_seasonal_contribution)
- - [plot_all_profiles](api.html#pyPMF.PMF.PlotterAccessor.plot_all_profiles)
+ - [plot_per_microgramm](api.html#pyPMF.plotter.Plotter.plot_per_microgramm)
+ - [plot_totalspeciesum](api.html#pyPMF.plotter.Plotter.plot_totalspeciesum)
+ - [plot_stacked_profiles](api.html#pyPMF.plotter.Plotter.plot_stacked_profiles)
+ - [plot_contrib](api.html#pyPMF.plotter.Plotter.plot_contrib)
+ - [plot_stacked_contribution](api.html#pyPMF.plotter.Plotter.plot_stacked_contribution)
+ - [plot_samples_sources_contribution](api.html#pyPMF.plotter.Plotter.plot_samples_sources_contribution)
+ - [plot_seasonal_contribution](api.html#pyPMF.plotter.Plotter.plot_seasonal_contribution)
+ - [plot_all_profiles](api.html#pyPMF.plotter.Plotter.plot_all_profiles)
+ - [plot_polluted_contributions](api.html#pyPMF.plotter.Plotter.plot_polluted_contributions)
 
 ### Chemical profile (per microgram of total variable)
 
@@ -236,11 +238,29 @@ grecb.plot.plot_per_microgramm(profiles=["Primary biogenic"])
 
 ```
 
+```eval_rst
+.. figure:: images/plot_per_microgramm_POA.png
+   :scale: 50 %
+   :alt: Contribution per microgramm of total specie for POA
+   :align: center
+
+   Primary biogenic factor chemical profile as % of total variable.
+```
+
 ### Chemical profile (in percentage of the sum of each species)
 
 ```python
 grecb.plot.plot_totalspeciesum(profiles=["Primary biogenic"])
 
+```
+
+```eval_rst
+.. figure:: images/plot_totalspeciesum_POA.png
+   :scale: 50 %
+   :alt: Contribution to total specie sum for POA
+   :align: center
+
+   Primary biogenic factor chemical profile as % of total specie sum.
 ```
 
 ### Chemical profile stacked (in percentage of the sum of each species)
@@ -270,12 +290,12 @@ grecb.plot.plot_contrib(profiles=["Primary biogenic"])
 will produce the following graph 
 
 ```eval_rst
-.. figure:: images/timeseries_POA.png
+.. figure:: images/plot_timeseries_POA.png
    :scale: 50 %
    :alt: Time series of POA
    :align: center
 
-   Primary biogenic factor contribution to the total variable.
+   Primary biogenic factor total variable (i.e. PM10) contribution in µg/m³.
 
 ```
 
@@ -294,7 +314,7 @@ grecb.plot.plot_seasonal_contribution(normalize=False, annual=False)
    :alt: Seasonnal barplot contribution
    :align: center
 
-   Seasonnal contribution of the factors to the PM mass.
+   Seasonnal mean contribution of the factors to the PM mass.
 
 ```
 

@@ -6,126 +6,9 @@ import matplotlib.ticker as mticker
 import matplotlib.colors as mcolors
 import seaborn as sns
 
-from reader import readers
-from plotter import plotter
-
-
-def get_sourcesCategories(profiles):
-    """Get the sources category according to the sources name.
-
-    Ex. Aged sea salt → Aged_sea_salt
-
-    :profiles: list
-    :returns: list
-
-    """
-    possible_sources = {
-        "Vehicular": "Traffic",
-        "VEH": "Traffic",
-        "VEH ind": "Traffic_ind",
-        "Traffic_exhaust": "Traffic_exhaust",
-        "Traffic_non-exhaust": "Traffic_non-exhaust",
-        "VEH dir": "Traffic_dir",
-        "Oil/Vehicular": "Traffic",
-        "Oil": "Oil",
-        "Vanadium rich": "Vanadium rich",
-        "Road traffic/oil combustion": "Traffic",
-        "Traffic": "Road traffic",
-        "Traffic 1": "Traffic 1",
-        "Traffic 2": "Traffic 2",
-        "Primary traffic": "Road traffic",
-        "Road traffic": "Road traffic",
-        "Road trafic": "Road traffic",
-        "Road traffic/dust": "Traffic/dust (Mix)",
-        "Bio. burning": "Biomass_burning",
-        "Bio burning": "Biomass_burning",
-        "Comb fossile/biomasse": "Biomass_burning",
-        "BB": "Biomass_burning",
-        "Biomass_burning": "Biomass_burning",
-        "Biomass Burning": "Biomass_burning",
-        "Biomass burning": "Biomass_burning",
-        "BB1": "Biomass_burning1",
-        "BB2": "Biomass_burning2",
-        "Sulfate-rich": "Sulfate_rich",
-        "Sulphate-rich": "Sulfate_rich",
-        "Nitrate-rich": "Nitrate_rich",
-        "Sulfate rich": "Sulfate_rich",
-        "Sulfate_rich": "Sulfate_rich",
-        "Nitrate rich": "Nitrate_rich",
-        "Nitrate_rich": "Nitrate_rich",
-        "Secondary inorganics": "Secondary_inorganics",
-        "Secondaire": "MSA_rich",
-        "Secondary bio": "MSA_rich",
-        "Secondary biogenic": "MSA_rich",
-        "Secondary organic": "MSA_rich",
-        "Secondary oxidation": "Secondary_oxidation",
-        "Secondary biogenic oxidation": "Secondary_biogenic_oxidation",
-        "Secondaire organique": "MSA_rich",
-        # "Marine SOA": "Marine SOA",
-        "Marine SOA": "MSA_rich",
-        "MSA_rich": "MSA_rich",
-        "MSA-rich": "MSA-rich",
-        "MSA rich": "MSA_rich",
-        "Secondary biogenic/sulfate": "SOA/sulfate (Mix)",
-        "Marine SOA/SO4": "SOA/sulfate (Mix)",
-        "Marine/HFO": "Marine/HFO",
-        "Marine biogenic/HFO": "Marine/HFO",
-        "Secondary biogenic/HFO": "Marine/HFO",
-        "Marine bio/HFO": "Marine/HFO",
-        "Marin bio/HFO": "Marine/HFO",
-        "Sulfate rich/HFO": "Marine/HFO",
-        "Marine secondary": "MSA_rich",
-        "Marin secondaire": "MSA_rich",
-        "HFO": "HFO",
-        "HFO (stainless)": "HFO",
-        "Marin": "MSA_rich",
-        "Sea/road salt": "Sea-road salt",
-        "Sea-road salt": "Sea-road salt",
-        "sea-road salt": "Sea-road salt",
-        "Road salt": "Salt",
-        "Sea salt": "Salt",
-        "Seasalt": "Salt",
-        "Salt": "Salt",
-        "Fresh seasalt": "Salt",
-        "Sels de mer": "Salt",
-        "Aged_salt": "Aged_salt",
-        "Aged sea salt": "Aged_salt",
-        "Aged seasalt": "Aged_salt",
-        "Aged seasalt": "Aged_salt",
-        "Aged salt": "Aged_salt",
-        "Primary_biogenic": "Primary_biogenic",
-        "Primary bio": "Primary_biogenic",
-        "Primary biogenic": "Primary_biogenic",
-        "Biogénique primaire": "Primary_biogenic",
-        "Biogenique": "Primary_biogenic",
-        "Biogenic": "Primary_biogenic",
-        "Mineral dust": "Dust",
-        "Mineral dust ": "Dust",
-        "Resuspended_dust": "Resuspended_dust",
-        "Resuspended dust": "Resuspended_dust",
-        "Dust": "Dust",
-        "Crustal dust": "Dust",
-        "Dust (mineral)": "Dust",
-        "Dust/biogénique marin": "Dust",
-        "AOS/dust": "Dust",
-        "Industrial": "Industrial",
-        "Industry": "Industrial",
-        "Industrie": "Industrial",
-        "Industries": "Industrial",
-        "Industry/vehicular": "Industry/traffic",
-        "Industry/traffic": "Industry/traffic",
-        "Industries/trafic": "Industry/traffic",
-        "Cadmium rich": "Cadmium rich",
-        "Fioul lourd": "HFO",
-        "Arcellor": "Industrial",
-        "Siderurgie": "Industrial",
-        "Débris végétaux": "Plant_debris",
-        "Chlorure": "Chloride",
-        "PM other": "Other",
-        "Undetermined": "Undertermined"
-        }
-    s = [possible_sources[k] for k in profiles]
-    return s
+from .reader import readers
+from .plotter import plotter
+from .utils import get_sourcesCategories, add_season
 
 class PMF(object):
 
@@ -301,7 +184,6 @@ class PMF(object):
         df : pd.DataFrame
             seasonal contribution
         """
-        from py4pm.dateutilities import add_season
 
         if constrained:
             if self.dfprofiles_c is None:
@@ -373,7 +255,7 @@ class PMF(object):
     def rename_profile_to_profile_category(self):
         """Rename the factor profile name to match the category
 
-        See chemutilities.get_sourcesCategories
+        See pyPMF.utils.get_sourcesCategories
         """
         DF = [
             self.dfprofiles_b,

@@ -16,7 +16,7 @@ pyPMF.reader module
 --------------------------
 
 ```eval_rst
-.. automodule:: pyPMF.reader
+.. automodule:: pyPMF.reader.readers
    :members:
    :undoc-members:
    :show-inheritance:
@@ -27,7 +27,7 @@ pyPMF.plotter module
 -------------------------
 
 ```eval_rst
-.. automodule:: pyPMF.plotter
+.. automodule:: pyPMF.plotter.plotter
    :members:
    :undoc-members:
    :show-inheritance:

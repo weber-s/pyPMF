@@ -13,7 +13,7 @@ Currently, only data from the EPA PMF5 is handle, from `xlsx` or sql database ou
 
 ```eval_rst
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 3
     
     usage
     api

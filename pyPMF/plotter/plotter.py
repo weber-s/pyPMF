@@ -817,7 +817,7 @@ class Plotter():
         df : DataFrame
 
         """
-        from py4pm.dateutilities import add_season
+        from .utils import add_season
         pmf = self.pmf
 
         if dfcontrib is None:
