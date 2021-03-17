@@ -174,14 +174,14 @@ class Plotter():
         else:
             dfprofiles = pmf.dfprofiles_b
 
-        d = df.xs(profile, level="profile") \
-                / (df.xs(profile, level="profile").loc[pmf.totalVar])
+        d = df.xs(profile, level="Profile") \
+                / (df.xs(profile, level="Profile").loc[pmf.totalVar])
         d = d.reindex(species).unstack().reset_index()
         dref = dfprofiles[profile] / dfprofiles.loc[pmf.totalVar, profile]
         dref = dref.reset_index()
-        sns.boxplot(data=d.replace({0: np.nan}), x="specie", y=0,
+        sns.boxplot(data=d.replace({0: np.nan}), x="Specie", y=0,
                     color="grey", ax=ax)
-        sns.stripplot(data=dref.replace({0: np.nan}), x="specie", y=profile,
+        sns.stripplot(data=dref.replace({0: np.nan}), x="Specie", y=profile,
                       ax=ax, jitter=False, color="red")
         ax.set_yscale('log')
         ax.set_xticklabels(
@@ -234,14 +234,14 @@ class Plotter():
             for sp in species:
                 sumsp[sp] = df.loc[(sp, slice(None)), :].mean(axis=1).sum()
 
-        d = df.xs(profile, level="profile").divide(sumsp.iloc[0], axis=0) * 100
-        d.index.names = ["specie"]
+        d = df.xs(profile, level="Profile").divide(sumsp.iloc[0], axis=0) * 100
+        d.index.names = ["Specie"]
         d = d.reindex(species).unstack().reset_index()
         dref = dfprofiles[profile].divide(dfprofiles.sum(axis=1)) * 100
         dref = dref.reset_index()
-        sns.barplot(data=d, x="specie", y=0, color="grey", ci="sd", ax=ax,
+        sns.barplot(data=d, x="Specie", y=0, color="grey", ci="sd", ax=ax,
                     label="BS (sd)")
-        sns.stripplot(data=dref, x="specie", y=0, color="red", jitter=False,
+        sns.stripplot(data=dref, x="Specie", y=0, color="red", jitter=False,
                       ax=ax, label="Ref. run")
         ax.set_xticklabels(
             pretty_specie([t.get_text() for t in ax.get_xticklabels()]),
@@ -301,7 +301,7 @@ class Plotter():
                     index=dfcontrib.index
                 )
                 for BS in dfBS.columns:
-                    d[BS] = dfcontrib[profile] * dfBS.xs(profile, level="profile").loc[specie][BS]
+                    d[BS] = dfcontrib[profile] * dfBS.xs(profile, level="Profile").loc[specie][BS]
                 mstd = d.std(axis=1)
                 ma = d.mean(axis=1)
                 plt.fill_between(
@@ -315,7 +315,7 @@ class Plotter():
                     index=dfcontrib.index
                 )
                 for DISP in ["DISP Min", "DISP Max"]:
-                    d[DISP] = dfcontrib[profile] * dfDISP.xs(profile, level="profile").loc[specie][DISP]
+                    d[DISP] = dfcontrib[profile] * dfDISP.xs(profile, level="Profile").loc[specie][DISP]
                 plt.fill_between(
                     d.index, d["DISP Min"], d["DISP Max"],
                     label="DISP (min-max)", **fill_kwarg
@@ -460,13 +460,13 @@ class Plotter():
                 inplace=True
         )
 
-        df = df.melt(id_vars=["polluted"], var_name=["profile"], value_name=specie)\
-            .groupby(["polluted", "profile"])\
+        df = df.melt(id_vars=["polluted"], var_name=["Profile"], value_name=specie)\
+            .groupby(["polluted", "Profile"])\
             .mean()\
             .reset_index()\
-            .pivot(index=["polluted"], columns=["profile"])
+            .pivot(index=["polluted"], columns=["Profile"])
 
-        df.columns = df.columns.get_level_values("profile")
+        df.columns = df.columns.get_level_values("Profile")
 
         return df
 

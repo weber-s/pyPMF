@@ -90,6 +90,44 @@ class BaseReader(ABC):
         """
         pass
 
+    def _handle_non_convergente_bootstrap(self, dfBS_profile, dfbootstrap_mapping):
+        """Get ride of bootstrap run that did not converged
+        Note that this is different than unmapped BS!
+
+        Also, sometime BS end up with concentration of total variable close to 0, that may
+        cause DividedByZero error...
+
+        Parameters
+        ==========
+
+        dfBS_profile : DataFrame
+            Bootstrap profile (all of them)
+        dfbootstrap_mapping : DataFrame
+            Mapping between base factor and BS factor (use to determined the number of non
+            convergent BS (≠ than unmapped))
+        """
+        # handle nonconvergente BS
+        nBSconverged = dfbootstrap_mapping.sum(axis=1)[0]
+        nBSnotconverged = len(dfBS_profile.columns)-1-nBSconverged
+        if nBSnotconverged > 0:
+            print("Warging: trying to exclude non-convergente BS")
+            idxStrange = (dfBS_profile.loc[self.pmf.totalVar]>100)
+            colStrange = dfBS_profile[idxStrange]\
+                    .dropna(axis=1, how="all")\
+                    .dropna(how="all")\
+                    .columns
+            print("BS eliminated:")
+            print(dfBS_profile[colStrange])
+            dfBS_profile = dfBS_profile.drop(colStrange, axis=1)
+
+        # handle BS without totalVariable
+        # if self.pmf.totalVar:
+        #     lowmass = (dfBS_profile.loc[self.pmf.totalVar, :] < 10**-3)
+        #     if lowmass.any().any():
+        #         print("Warning: BS with totalVar < 10**-3 encountered ({})".format(lowmass.any().sum()))
+        #         dfBS_profile = dfBS_profile.loc[:, ~lowmass.any()]
+
+
     def read_metadata(self):
         """Get profiles, species and co
 
@@ -101,7 +139,7 @@ class BaseReader(ABC):
         pmf = self.pmf
 
         if pmf.dfprofiles_b is None:
-            read_base_profiles()
+            self.read_base_profiles()
 
         pmf.profiles = pmf.dfprofiles_b.columns.tolist()
         pmf.nprofiles = len(pmf.profiles)
@@ -138,6 +176,7 @@ class BaseReader(ABC):
             except FileNotFoundError:
                 print("The file is not found for {}".format(reader))
 
+
 class XlsxReader(BaseReader):
     """
     Accessor class for the PMF class with all reader methods.
@@ -172,7 +211,7 @@ class XlsxReader(BaseReader):
         for i, sp in enumerate(pmf.species):
             d[sp] = dftmp.iloc[pmf.nprofiles*i:pmf.nprofiles*(i+1), :]
             d[sp].index = pmf.profiles
-            d[sp].index.name = "profile"
+            d[sp].index.name = "Profile"
             d[sp].columns = ["Boot{}".format(i) for i in range(len(d[sp].columns))]
         return d
 
@@ -199,10 +238,10 @@ class XlsxReader(BaseReader):
         dfbase = dfbase.iloc[idx[0]:idx[1], 1:]
         dfbase.dropna(axis=0, how="all", inplace=True)
         factor_names = list(dfbase.iloc[0, 1:])
-        dfbase.columns = ["specie"] + factor_names
+        dfbase.columns = ["Specie"] + factor_names
         dfbase = dfbase\
                 .drop(dfbase.index[0])\
-                .set_index("specie")
+                .set_index("Specie")
 
         # check correct number of column
         idx = dfbase.columns.isna().argmax()
@@ -227,7 +266,7 @@ class XlsxReader(BaseReader):
         pmf = self.pmf
 
         if pmf.profiles is None:
-            read_base_profiles()
+            self.read_base_profiles()
 
         dfcons = pd.read_excel(
                     self.basename+"_Constrained.xlsx",
@@ -252,8 +291,8 @@ class XlsxReader(BaseReader):
             dfcons = dfcons.loc[:, :nancolumns.idxmax()]
             dfcons.dropna(axis=1, how="all", inplace=True)
 
-        dfcons.columns = ["specie"] + pmf.profiles
-        dfcons = dfcons.set_index("specie")
+        dfcons.columns = ["Specie"] + pmf.profiles
+        dfcons = dfcons.set_index("Specie")
         dfcons = dfcons[dfcons.index.notnull()]
         # avoid 10**-12 possible concentration...
         dfcons = dfcons.infer_objects()
@@ -271,7 +310,7 @@ class XlsxReader(BaseReader):
         pmf = self.pmf
 
         if pmf.profiles is None:
-            read_base_profiles()
+            self.read_base_profiles()
 
         dfcontrib = pd.read_excel(
             self.basename+"_base.xlsx",
@@ -312,7 +351,7 @@ class XlsxReader(BaseReader):
         pmf = self.pmf
 
         if pmf.profiles is None:
-            read_base_profiles()
+            self.read_base_profiles()
 
         dfcontrib = pd.read_excel(
             self.basename+"_Constrained.xlsx",
@@ -353,7 +392,7 @@ class XlsxReader(BaseReader):
         pmf = self.pmf
 
         if pmf.profiles is None:
-            read_base_profiles()
+            self.read_base_profiles()
 
         dfprofile_boot = pd.read_excel(
             self.basename+"_boot.xlsx",
@@ -372,32 +411,14 @@ class XlsxReader(BaseReader):
 
         # 13 is the first column for BS result
         dfprofile_boot = dfprofile_boot.iloc[idx[0]+1:, 13:]
-        df = self._split_df_by_nan(dfprofile_boot)
+        dfBS_profile_b = self._split_df_by_nan(dfprofile_boot)
 
-        df = pd.concat(df)
-        df.index.names = ["specie", "profile"]
-        # handle nonconvergente BS
-        nBSconverged = dfbootstrap_mapping_b.sum(axis=1)[0]
-        nBSnotconverged = len(df.columns)-1-nBSconverged
-        if nBSnotconverged > 0:
-            print("Warging: trying to exclude non-convergente BS")
-            idxStrange = (df.loc[pmf.totalVar]>100)
-            colStrange = df[idxStrange]\
-                    .dropna(axis=1, how="all")\
-                    .dropna(how="all")\
-                    .columns
-            print("BS eliminated:")
-            print(df[colStrange])
-            df = df.drop(colStrange, axis=1)
+        dfBS_profile_b = pd.concat(dfBS_profile_b)
+        dfBS_profile_b.index.names = ["Specie", "Profile"]
 
-        # handle BS without totalVariable
-        if pmf.totalVar:
-            lowmass = (df.loc[pmf.totalVar, :] < 10**-3)
-            if lowmass.any().any():
-                print("Warning: BS with totalVar < 10**-3 encountered ({})".format(lowmass.any().sum()))
-                df = df.loc[:, ~lowmass.any()]
+        self._handle_non_convergente_bootstrap(dfBS_profile_b, dfbootstrap_mapping_b)
 
-        pmf.dfBS_profile_b = df
+        pmf.dfBS_profile_b = dfBS_profile_b
         pmf.dfbootstrap_mapping_b = dfbootstrap_mapping_b
 
     def read_constrained_bootstrap(self):
@@ -411,7 +432,7 @@ class XlsxReader(BaseReader):
         pmf = self.pmf
 
         if pmf.profiles is None:
-            read_base_profiles()
+            self.read_base_profiles()
 
         dfprofile_boot = pd.read_excel(
             self.basename+"_Gcon_profile_boot.xlsx",
@@ -429,31 +450,14 @@ class XlsxReader(BaseReader):
         idx = idx[idx].index.tolist()
         # 13 is the first column for BS result
         dfprofile_boot = dfprofile_boot.iloc[idx[0]+1:, 13:]
-        df = self._split_df_by_nan(dfprofile_boot)
+        dfBS_profile_c = self._split_df_by_nan(dfprofile_boot)
 
-        df = pd.concat(df)
-        df.index.names = ["specie", "profile"]
-        # handle nonconvergente BS
-        nBSconverged = dfbootstrap_mapping_c.sum(axis=1)[0]
-        nBSnotconverged = len(df.columns)-1-nBSconverged
-        if nBSnotconverged > 0:
-            print("Warging: trying to exclude non-convergente BS")
-            idxStrange = (df.loc[pmf.totalVar]>100)
-            colStrange = df[idxStrange]\
-                    .dropna(axis=1, how="all")\
-                    .dropna(how="all")\
-                    .columns
-            print("BS eliminated: ", colStrange)
-            df = df.drop(colStrange, axis=1)
+        dfBS_profile_c = pd.concat(dfBS_profile_c)
+        dfBS_profile_c.index.names = ["Specie", "Profile"]
 
-        # handle BS without totalVariable
-        if pmf.totalVar:
-            lowmass = (df.loc[pmf.totalVar, :] < 10**-3)
-            if lowmass.any().any():
-                print("Warning: BS with totalVar < 10**-3 encountered ({})".format(lowmass.any().sum()))
-                df = df.loc[:, ~lowmass.any()]
+        self._handle_non_convergente_bootstrap(dfBS_profile_c, dfbootstrap_mapping_c)
 
-        pmf.dfBS_profile_c = df
+        pmf.dfBS_profile_c = dfBS_profile_c
         pmf.dfbootstrap_mapping_c = dfbootstrap_mapping_c
 
     def read_base_uncertainties_summary(self):
@@ -465,10 +469,10 @@ class XlsxReader(BaseReader):
         pmf = self.pmf
 
         if pmf.profiles is None:
-            read_base_profiles()
+            self.read_base_profiles()
 
         if pmf.species is None:
-            read_base_profiles()
+            self.read_base_profiles()
 
         rawdf = pd.read_excel(
             self.basename+"_BaseErrorEstimationSummary.xlsx",
@@ -504,16 +508,16 @@ class XlsxReader(BaseReader):
         idx = df.iloc[:, 0].str.contains("Specie|Concentration").astype(bool)
         df = df.drop(idx[idx].index)
         df = df.dropna(axis=0, how='all')
-        df["profile"] = pd.np.repeat(pmf.profiles, len(pmf.species)).tolist()
+        df["Profile"] = pd.np.repeat(pmf.profiles, len(pmf.species)).tolist()
 
-        df.columns = ["specie", "Base run", 
+        df.columns = ["Specie", "Base run", 
                 "BS 5th", "BS 25th", "BS median", "BS 75th", "BS 95th", "tmp1",
                 "BS-DISP 5th", "BS-DISP average", "BS-DISP 95th", "tmp2",
                 "DISP Min", "DISP average", "DISP Max",
-                "profile"
+                "Profile"
                 ]
-        df["specie"] = pmf.species * len(pmf.profiles)
-        df.set_index(["profile", "specie"], inplace=True)
+        df["Specie"] = pmf.species * len(pmf.profiles)
+        df.set_index(["Profile", "Specie"], inplace=True)
         df.drop(["tmp1", "tmp2"], axis=1, inplace=True)
 
         pmf.df_uncertainties_summary_b = df.infer_objects()
@@ -527,10 +531,10 @@ class XlsxReader(BaseReader):
         pmf = self.pmf
 
         if pmf.profiles is None:
-            read_base_profiles()
+            self.read_base_profiles()
 
         if pmf.species is None:
-            read_base_profiles()
+            self.read_base_profiles()
 
         rawdf = pd.read_excel(
             self.basename+"_ConstrainedErrorEstimationSummary.xlsx",
@@ -565,16 +569,16 @@ class XlsxReader(BaseReader):
         idx = df.iloc[:, 0].str.contains("Specie|Concentration").astype(bool)
         df = df.drop(idx[idx].index)
         df = df.dropna(axis=0, how='all')
-        df["profile"] = np.repeat(pmf.profiles, len(pmf.species)).tolist()
+        df["Profile"] = np.repeat(pmf.profiles, len(pmf.species)).tolist()
 
-        df.columns = ["specie", "Constrained base run",
+        df.columns = ["Specie", "Constrained base run",
                 "BS 5th", "BS median", "BS 95th", "tmp1",
                 "BS-DISP 5th", "BS-DISP average", "BS-DISP 95th", "tmp2",
                 "DISP Min", "DISP average", "DISP Max",
-                "profile"
+                "Profile"
                 ]
-        df["specie"] = pmf.species * len(pmf.profiles)
-        df.set_index(["profile", "specie"], inplace=True)
+        df["Specie"] = pmf.species * len(pmf.profiles)
+        df.set_index(["Profile", "Specie"], inplace=True)
         df.drop(["tmp1", "tmp2"], axis=1, inplace=True)
 
         pmf.df_uncertainties_summary_c = df.infer_objects()
@@ -680,6 +684,31 @@ class SqlReader(BaseReader):
 
         self.pmf.dfcontrib_c = df
 
+    def _read_bootstrap(self, tableBS, table_mapping):
+        dfBS_profile = self._read_table(table=tableBS)
+        dfBS_profile = (
+                dfBS_profile
+                .dropna(axis=1, how='all')
+                .set_index(["Specie", "Profile"])
+                .drop(["index", "Program", "Station"], axis=1)
+        )
+        dfBS_profile = dfBS_profile.reindex(
+                ["Boot{}".format(i) for i in range(0, len(dfBS_profile.columns))],
+                axis=1
+                )
+
+        dfbootstrap_mapping = self._read_table(table=table_mapping)
+        dfbootstrap_mapping = (
+                dfbootstrap_mapping
+                .dropna(axis=1, how="all")
+                .set_index("BS-mapping")
+                .drop(["index", "Program", "Station"], axis=1)
+                .sort_index().sort_index(axis=1)
+                )
+
+        return (dfBS_profile, dfbootstrap_mapping)
+
+
     def read_base_bootstrap(self):
         """Read the "base" bootstrap result from the file: '_boot.xlsx'
         and add :
@@ -688,7 +717,16 @@ class SqlReader(BaseReader):
         - self.dfbootstrap_mapping_b: table of mapped profiles
 
         """
-        pass
+        dfBS_profile_b, dfbootstrap_mapping_b = self._read_bootstrap(
+                tableBS="dfBS_profile_b",
+                table_mapping="dfbootstrap_mapping_b"
+            )
+        
+        self._handle_non_convergente_bootstrap(dfBS_profile_b, dfbootstrap_mapping_b)
+
+        self.pmf.dfBS_profile_b = dfBS_profile_b
+        self.pmf.dfbootstrap_mapping_b = dfbootstrap_mapping_b
+
 
     def read_constrained_bootstrap(self):
         """Read the "base" bootstrap result from the file: '_Gcon_profile_boot.xlsx'
@@ -698,20 +736,61 @@ class SqlReader(BaseReader):
         - self.dfbootstrap_mapping_c: table of mapped profiles
 
         """
-        pass
+        dfBS_profile_c, dfbootstrap_mapping_c = self._read_bootstrap(
+                tableBS="dfBS_profile_c",
+                table_mapping="dfbootstrap_mapping_c"
+            )
+        self._handle_non_convergente_bootstrap(dfBS_profile_c, dfbootstrap_mapping_c)
+
+        self.pmf.dfBS_profile_c = dfBS_profile_c
+        self.pmf.dfbootstrap_mapping_c = dfbootstrap_mapping_c
+
+
+    def _read_uncertainties_summary(self, table_disp, table_summary):
+        dfswap = self._read_table(table=table_disp)
+        dfswap = (
+                dfswap
+                .dropna(axis=1, how='all')
+                .drop(["index", "Program", "Station"], axis=1)
+                .set_index("Count")
+                )
+
+        dfunc = self._read_table(table=table_summary)
+        dfunc = (
+                dfunc
+                .drop(["index", "Program", "Station"], axis=1)
+                .set_index(["Profile", "Specie"])
+                )
+
+        return (dfswap, dfunc)
+
 
     def read_base_uncertainties_summary(self):
-        """Read the _BaseErrorEstimationSummary.xlsx file and add:
+        """Read the base error uncertainties and add:
 
+        - self.df_disp_swap_b : number of swap
         - self.df_uncertainties_summary_b : uncertainties from BS, DISP and BS-DISP
 
         """
-        pass
+        dfswap, dfunc = self._read_uncertainties_summary(
+                table_disp="df_disp_swap_b",
+                table_summary="df_uncertainties_summary_b"
+            )
+
+        self.pmf.df_disp_swap_b = dfswap
+        self.pmf.df_uncertainties_summary_b = dfunc
 
     def read_constrained_uncertainties_summary(self):
-        """Read the _ConstrainedErrorEstimationSummary.xlsx file and add :
+        """Read the constrained error uncertainties and add :
 
+        - self.df_disp_swap_c : number of swap
         - self.df_uncertainties_summary_b : uncertainties from BS, DISP and BS-DISP
 
         """
-        pass
+        dfswap, dfunc = self._read_uncertainties_summary(
+                table_disp="df_disp_swap_c",
+                table_summary="df_uncertainties_summary_c"
+            )
+
+        self.pmf.df_disp_swap_c = dfswap
+        self.pmf.df_uncertainties_summary_c = dfunc
