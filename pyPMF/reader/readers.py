@@ -480,7 +480,9 @@ class XlsxReader(BaseReader):
             header=None,
             engine=XLSX_ENGINE
             )["Error Estimation Summary"]
-        rawdf = rawdf.dropna(axis=0, how="all").reset_index().drop("index", axis=1)
+        rawdf = rawdf.dropna(axis=0, how="all").reset_index()
+        if "index" in rawdf.columns:
+            rawdf = rawdf.drop("index", axis=1)
 
 
         # ==== DISP swap
@@ -542,7 +544,9 @@ class XlsxReader(BaseReader):
             header=None,
             engine=XLSX_ENGINE
             )["Constrained Error Est. Summary"]
-        rawdf = rawdf.dropna(axis=0, how="all").reset_index().drop("index", axis=1)
+        rawdf = rawdf.dropna(axis=0, how="all").reset_index()
+        if "index" in rawdf.columns:
+            rawdf = rawdf.drop("index", axis=1)
 
         # ==== DISP swap
         idx = rawdf.iloc[:, 1].str.contains("Swaps").fillna(False)
@@ -626,6 +630,8 @@ class SqlReader(BaseReader):
             query += " AND Program IS '{program}'".format(program=self.SQL_program)
 
         df = pd.read_sql(query, con=self.con, **read_sql_kws)
+        if "index" in df.columns:
+            df = df.drop("index", axis=1)
 
         return df
 
@@ -638,7 +644,9 @@ class SqlReader(BaseReader):
         df = self._read_table(table="dfprofiles_b")
 
         df = df.dropna(axis=1, how='all')
-        df = df.set_index(["Specie"]).drop(["index", "Program", "Station"], axis=1)
+        df = df.set_index(["Specie"]).drop(["Program", "Station"], axis=1)
+        if "index" in df.columns:
+            df = df.drop("index", axis=1)
 
         self.pmf.dfprofiles_b = df
 
@@ -653,7 +661,9 @@ class SqlReader(BaseReader):
         df = self._read_table(table="dfprofiles_c")
 
         df = df.dropna(axis=1, how='all')
-        df = df.set_index(["Specie"]).drop(["index", "Program", "Station"], axis=1)
+        df = df.set_index(["Specie"]).drop(["Program", "Station"], axis=1)
+        if "index" in df.columns:
+            df = df.drop("index", axis=1)
 
         self.pmf.dfprofiles_c = df
 
@@ -667,7 +677,9 @@ class SqlReader(BaseReader):
         """
         df = self._read_table(table="dfcontrib_b", read_sql_kws=dict(parse_dates="Date"))
         df = df.dropna(axis=1, how='all')
-        df = df.set_index(["Date"]).drop(["index", "Program", "Station"], axis=1)
+        df = df.set_index(["Date"]).drop(["Program", "Station"], axis=1)
+        if "index" in df.columns:
+            df = df.drop("index", axis=1)
 
         self.pmf.dfcontrib_b = df
 
@@ -680,7 +692,9 @@ class SqlReader(BaseReader):
         """
         df = self._read_table(table="dfcontrib_c", read_sql_kws=dict(parse_dates="Date"))
         df = df.dropna(axis=1, how='all')
-        df = df.set_index(["Date"]).drop(["index", "Program", "Station"], axis=1)
+        df = df.set_index(["Date"]).drop(["Program", "Station"], axis=1)
+        if "index" in df.columns:
+            df = df.drop("index", axis=1)
 
         self.pmf.dfcontrib_c = df
 
@@ -690,19 +704,24 @@ class SqlReader(BaseReader):
                 dfBS_profile
                 .dropna(axis=1, how='all')
                 .set_index(["Specie", "Profile"])
-                .drop(["index", "Program", "Station"], axis=1)
+                .drop(["Program", "Station"], axis=1)
         )
+        if "index" in dfBS_profile.columns:
+            dfBS_profile = dfBS_profile.drop("index", axis=1)
+
         dfBS_profile = dfBS_profile.reindex(
                 ["Boot{}".format(i) for i in range(0, len(dfBS_profile.columns))],
                 axis=1
                 )
 
         dfbootstrap_mapping = self._read_table(table=table_mapping)
+        if "index" in dfbootstrap_mapping.columns:
+            dfbootstrap_mapping = dfbootstrap_mapping.drop("index", axis=1)
         dfbootstrap_mapping = (
                 dfbootstrap_mapping
                 .dropna(axis=1, how="all")
                 .set_index("BS-mapping")
-                .drop(["index", "Program", "Station"], axis=1)
+                .drop(["Program", "Station"], axis=1)
                 .sort_index().sort_index(axis=1)
                 )
 
@@ -748,19 +767,21 @@ class SqlReader(BaseReader):
 
     def _read_uncertainties_summary(self, table_disp, table_summary):
         dfswap = self._read_table(table=table_disp)
-        dfswap = (
-                dfswap
-                .dropna(axis=1, how='all')
-                .drop(["index", "Program", "Station"], axis=1)
-                .set_index("Count")
-                )
+        if not dfswap.empty:
+            dfswap = (
+                    dfswap
+                    .dropna(axis=1, how='all')
+                    .drop(["Program", "Station"], axis=1)
+                    .set_index("Count")
+                    )
 
         dfunc = self._read_table(table=table_summary)
-        dfunc = (
-                dfunc
-                .drop(["index", "Program", "Station"], axis=1)
-                .set_index(["Profile", "Specie"])
-                )
+        if not dfunc.empty:
+            dfunc = (
+                    dfunc
+                    .drop(["Program", "Station"], axis=1)
+                    .set_index(["Profile", "Specie"])
+                    )
 
         return (dfswap, dfunc)
 

@@ -172,6 +172,102 @@ def get_sourcesCategories(profiles):
     s = [possible_sources[k] for k in profiles]
     return s
 
+def get_sourceColor(source=None):
+    """Return the hexadecimal color of the source(s) 
+
+    If no option, then return the whole dictionary
+    
+    Optional Parameters
+    ===================
+
+    source : str
+        The name of the source
+    """
+    color = {
+        "Traffic": "#000000",
+        "Traffic 1": "#000000",
+        "Traffic 2": "#102262",
+        "Road traffic": "#000000",
+        "Primary traffic": "#000000",
+        "Traffic_ind": "#000000",
+        "Traffic_exhaust": "#000000",
+        "Traffic_dir": "#444444",
+        "Traffic_non-exhaust": "#444444",
+        "Resuspended_dust": "#444444",
+        "Oil/Vehicular": "#000000",
+        "Road traffic/oil combustion": "#000000",
+        "Biomass_burning": "#92d050",
+        "Biomass burning": "#92d050",
+        "Biomass_burning1": "#92d050",
+        "Biomass_burning2": "#92d050",
+        "Sulfate-rich": "#ff2a2a",
+        "Sulfate_rich": "#ff2a2a",
+        "Sulfate rich": "#ff2a2a",
+        "Nitrate-rich": "#217ecb", # "#ff7f2a",
+        "Nitrate_rich": "#217ecb", # "#ff7f2a",
+        "Nitrate rich": "#217ecb", # "#ff7f2a",
+        "Secondary_inorganics": "#0000cc",
+        "MSA_rich": "#ff7f2a", # 8c564b",
+        "MSA-rich": "#ff7f2a", # 8c564b",
+        "Secondary_oxidation": "#ff87dc",
+        "Secondary_biogenic_oxidation": "#ff87dc",
+        "Secondary oxidation": "#ff87dc",
+        "Secondary biogenic oxidation": "#ff87dc",
+        "Marine SOA": "#ff7f2a", # 8c564b",
+        "Biogenic SOA": "#8c564b",
+        "Anthropogenic SOA": "#8c564b",
+        "Marine/HFO": "#a37f15", #8c564b",
+        "Aged seasalt/HFO": "#8c564b",
+        "Marine_biogenic": "#fc564b",
+        "HFO": "#70564b",
+        "HFO (stainless)": "#70564b",
+        "Oil": "#70564b",
+        "Vanadium rich": "#70564b",
+        "Cadmium rich": "#70564b",
+        "Marine": "#33b0f6",
+        "Marin": "#33b0f6",
+        "Salt": "#00b0f0",
+        "Seasalt": "#00b0f0",
+        "Sea-road salt": "#209ecc",
+        "Sea/road salt": "#209ecc",
+        "Fresh seasalt": "#00b0f0",
+        "Aged_salt": "#97bdff", #00b0f0",
+        "Aged seasalt": "#97bdff", #00b0f0",
+        "Aged sea salt": "#97bdff", #00b0f0",
+        "Fungal spores": "#ffc000",
+        "Primary_biogenic": "#ffc000",
+        "Primary biogenic": "#ffc000",
+        "Biogenique": "#ffc000",
+        "Biogenic": "#ffc000",
+        "Dust": "#dac6a2",
+        "Mineral dust": "#dac6a2",
+        "Crustal_dust": "#dac6a2",
+        "Industrial": "#7030a0",
+        "Industries": "#7030a0",
+        "Indus/veh": "#5c304b",
+        "Industry/traffic": "#5c304b", #7030a0",
+        "Arcellor": "#7030a0",
+        "Siderurgie": "#7030a0",
+        "Plant debris": "#2aff80",
+        "Plant_debris": "#2aff80",
+        "Débris végétaux": "#2aff80",
+        "Choride": "#80e5ff",
+        "PM other": "#cccccc",
+        "Traffic/dust (Mix)": "#333333",
+        "SOA/sulfate (Mix)": "#6c362b",
+        "Sulfate rich/HFO": "#8c56b4",
+        "nan": "#ffffff",
+        "Undetermined": "#666"
+    }
+    color = pd.DataFrame(index=["color"], data=color)
+    if source:
+        if source not in color.keys():
+            print("WARNING: no {} found in colors".format(source))
+            return "#666666"
+        return color.loc["color", source]
+    else:
+        return color
+
 
 def format_xaxis_timeseries(ax):
     """Format the x-axis timeseries with minortick = month and majortick=year
