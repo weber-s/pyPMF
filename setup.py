@@ -1,7 +1,7 @@
 from setuptools import setup
 from os import path
 
-VERSION = '0.1.0'
+VERSION = '0.1.1'
 
 PACKAGES = [
         'pyPMF',

@@ -6,7 +6,7 @@ import matplotlib.ticker as mticker
 import matplotlib.colors as mcolors
 import seaborn as sns
 
-from ..utils import get_sourceColor
+from ..utils import get_sourceColor, add_season
 
 def _pretty_specie(text):
     map_species = {
@@ -80,13 +80,19 @@ class Plotter():
         else:
             dfprofiles = pmf.dfprofiles_b
 
-        d = df.xs(profile, level="Profile") \
-                / (df.xs(profile, level="Profile").loc[pmf.totalVar])
-        d = d.reindex(species).unstack().reset_index()
+        if df is not None:
+            d = df.xs(profile, level="Profile") \
+                    / (df.xs(profile, level="Profile").loc[pmf.totalVar])
+            d = d.reindex(species).unstack().reset_index()
+        else:
+            d = None
+
         dref = dfprofiles[profile] / dfprofiles.loc[pmf.totalVar, profile]
         dref = dref.reset_index()
-        sns.boxplot(data=d.replace({0: np.nan}), x="Specie", y=0,
-                    color="grey", ax=ax)
+
+        if df is not None:
+            sns.boxplot(data=d.replace({0: np.nan}), x="Specie", y=0,
+                        color="grey", ax=ax)
         sns.stripplot(data=dref.replace({0: np.nan}), x="Specie", y=profile,
                       ax=ax, jitter=False, color="red")
         ax.set_yscale('log')
@@ -135,18 +141,22 @@ class Plotter():
         else:
             dfprofiles = pmf.dfprofiles_b
 
-        if sumsp is None:
+        if sumsp is None and df is not None:
             sumsp = pd.DataFrame(columns=species, index=['sum'])
             for sp in species:
                 sumsp[sp] = df.loc[(sp, slice(None)), :].mean(axis=1).sum()
 
-        d = df.xs(profile, level="Profile").divide(sumsp.iloc[0], axis=0) * 100
-        d.index.names = ["Specie"]
-        d = d.reindex(species).unstack().reset_index()
+        if df is not None:
+            d = df.xs(profile, level="Profile").divide(sumsp.iloc[0], axis=0) * 100
+            d.index.names = ["Specie"]
+            d = d.reindex(species).unstack().reset_index()
+
         dref = dfprofiles[profile].divide(dfprofiles.sum(axis=1)) * 100
         dref = dref.reset_index()
-        sns.barplot(data=d, x="Specie", y=0, color="grey", ci="sd", ax=ax,
-                    label="BS (sd)")
+
+        if df is not None:
+            sns.barplot(data=d, x="Specie", y=0, color="grey", ci="sd", ax=ax, label="BS (sd)")
+
         sns.stripplot(data=dref, x="Specie", y=0, color="red", jitter=False,
                       ax=ax, label="Ref. run")
         ax.set_xticklabels(
@@ -723,7 +733,6 @@ class Plotter():
         df : DataFrame
 
         """
-        from .utils import add_season
         pmf = self.pmf
 
         if dfcontrib is None:
@@ -765,8 +774,8 @@ class Plotter():
         df = pmf.get_seasonal_contribution(specie=specie, normalize=normalize,
                                             annual=annual,
                                            constrained=constrained)
-        c = get_sourceColor()
-        colors = c.loc["color", get_sourcesCategories(df.columns)]
+
+        colors = [get_sourceColor(c) for c in df.columns]
 
         df.index = [l.replace("_", " ") for l in df.index]
         axes = df.plot.bar(
