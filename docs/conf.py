@@ -26,7 +26,7 @@ copyright = '2019, Samuël Weber'
 author = 'Samuël Weber'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1.0'
+release = '0.1.1'
 
 
 # -- General configuration ---------------------------------------------------
@@ -41,7 +41,12 @@ extensions = [
     'sphinx.ext.napoleon',
     'recommonmark',
     'sphinx_rtd_theme',
+    'sphinx_markdown_tables'
 ]
+
+source_parsers = {
+    '.md': 'recommonmark.parser.CommonMarkParser',
+}
 
 source_suffix = {
     '.rst': 'restructuredtext',
