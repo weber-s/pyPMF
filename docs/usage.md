@@ -49,22 +49,20 @@ sqlite3 database, but as long as a proper connector is provided, it could be any
 
 Default tables are :
 
-  +-----------------------------------+------------------------------------|
-  | Content                           | Table name                         |
-  +-----------------------------------+------------------------------------|
-  | Base contributions                | PMF_dfcontrib_b                    |
-  | Constrained contributions         | PMF_dfcontrib_c                    |
-  | Base profiles                     | PMF_dfprofiles_b                   |
-  | Constrained profiles              | PMF_dfprofiles_c                   |
-  | Base bootstrap                    | PMF_dfBS_profile_b                 |
-  | Constrained bootstrap             | PMF_dfBS_profile_c                 |
-  | Base uncertainties summary        | PMF_df_uncertainties_summary_b     |
-  | Constrained uncertainties summary | PMF_df_uncertainties_summary_c     |
-  | Base bootstrap mapping            | PMF_dfbootstrap_mapping_b          |
-  | Constrained bootstrap mapping     | PMF_dfbootstrap_mapping_c          |
-  | Base disp swap count              | PMF_df_disp_swap_b                 |
-  | Constrained disp swap count       | PMF_df_disp_swap_c                 |
-  +-----------------------------------+------------------------------------|
+| Content                           | Table name                         |
+|-----------------------------------|------------------------------------|
+| Base contributions                | PMF_dfcontrib_b                    |
+| Constrained contributions         | PMF_dfcontrib_c                    |
+| Base profiles                     | PMF_dfprofiles_b                   |
+| Constrained profiles              | PMF_dfprofiles_c                   |
+| Base bootstrap                    | PMF_dfBS_profile_b                 |
+| Constrained bootstrap             | PMF_dfBS_profile_c                 |
+| Base uncertainties summary        | PMF_df_uncertainties_summary_b     |
+| Constrained uncertainties summary | PMF_df_uncertainties_summary_c     |
+| Base bootstrap mapping            | PMF_dfbootstrap_mapping_b          |
+| Constrained bootstrap mapping     | PMF_dfbootstrap_mapping_c          |
+| Base disp swap count              | PMF_df_disp_swap_b                 |
+| Constrained disp swap count       | PMF_df_disp_swap_c                 |
 
 but you can provided custom table names from the `SQL_tables_names` argument.
 
