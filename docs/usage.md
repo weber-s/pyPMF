@@ -4,6 +4,8 @@ Examples
 Load the PMF
 ------------
 
+### From XLSX output
+
 Given an output folder in `/home/myname/Documents/PMF/GRE-cb/MobilAir_woOrga` that looked like:
 
 ```
@@ -39,7 +41,48 @@ grecb = PMF(site="GRE-cb", reader="xlsx", BDIR="/home/myname/Documents/PMF/GRE-c
 
 ```
 
-Now, `grecb` is an instance of a PMF object, and has `read` and `plot` abilities.
+### From SQL database
+
+It is also possible to load data from a SQL database. Here after is an example with a
+sqlite3 database, but as long as a proper connector is provided, it could be anything
+(MySQL, Postgres, etc.).
+
+Default tables are :
+
+  +-----------------------------------+------------------------------------|
+  | Content                           | Table name                         |
+  +-----------------------------------+------------------------------------|
+  | Base contributions                | PMF_dfcontrib_b                    |
+  | Constrained contributions         | PMF_dfcontrib_c                    |
+  | Base profiles                     | PMF_dfprofiles_b                   |
+  | Constrained profiles              | PMF_dfprofiles_c                   |
+  | Base bootstrap                    | PMF_dfBS_profile_b                 |
+  | Constrained bootstrap             | PMF_dfBS_profile_c                 |
+  | Base uncertainties summary        | PMF_df_uncertainties_summary_b     |
+  | Constrained uncertainties summary | PMF_df_uncertainties_summary_c     |
+  | Base bootstrap mapping            | PMF_dfbootstrap_mapping_b          |
+  | Constrained bootstrap mapping     | PMF_dfbootstrap_mapping_c          |
+  | Base disp swap count              | PMF_df_disp_swap_b                 |
+  | Constrained disp swap count       | PMF_df_disp_swap_c                 |
+  +-----------------------------------+------------------------------------|
+
+but you can provided custom table names from the `SQL_tables_names` argument.
+
+```python
+import sqlite3
+from pyPMF.PMF import PMF
+
+conn = sqlite3.connect("./DB_PMF.db")
+
+grecb = PMF(site="GRE-cb", reader="sql", SQL_connection=conn)
+
+conn.close()
+
+```
+
+### PMF object
+
+Either way, now, `grecb` is an instance of a PMF object, and has `read` and `plot` abilities.
 
 Read the data
 -------------
@@ -47,13 +90,13 @@ Read the data
 ### Organization
 
 The `read` class of the PMF object give access to different reader to retreive data from
-the different xlsx files outputed by the EPA PMF5 software.
+the different data outputed by the EPA PMF5 software.
 
 They all start by `read_base*` or `read_constrained*` name, for the base and constrained
 run, respectively.
 
 The special method `read_metadata` is used to retrieve the factors names and species names
-from the `_base.xlsx` files, and use them everywhere else. It also try to set the total
+from the base run, and use them everywhere else. It also try to set the total
 variable name if any (one of PM10, PM2.5, PMrecons, PM10rec, PM10recons, otherwise try to
 guess), used to convert unit and to be the default variable to plot.
 
@@ -68,6 +111,7 @@ For now, the following readers are implemented :
  - read_constrained_profiles
  - read_constrained_bootstrap
  - read_constrained_uncertainties_summary
+ - read_all
 
 ### Contribution
 
@@ -112,7 +156,7 @@ grecb.read.read_constrained_profile()
 
 ```
 
-and `grecb` has now a not null `dfprofiles_b` and `dfprofiles_c` dataframe :
+and `grecb` has now `dfprofiles_b` and `dfprofiles_c` dataframe :
 
 ```python
 >>> grecb.dfprofiles_c
@@ -299,7 +343,11 @@ will produce the following graph
 
 ```
 
-Since the EPA PMF5 does not output the chemical profile (F) matrix of the boostrap, the uncertainties is estimated by computing the species concentration given the F matrix of the reference run and the G matrix of the bootstrap run. As a result, the output is "hacky" since in the bootstrap method, bith the F and G matrix are changing. If you want to remove them, just pass `BS=False` to the method.
+Since the EPA PMF5 does not output the chemical profile (F) matrix of the boostrap, the
+uncertainties is estimated by computing the species concentration given the F matrix of
+the reference run and the G matrix of the bootstrap run. As a result, the output is
+"hacky" since in the bootstrap method, both the F and G matrix are changing. If you want
+to remove them, just pass `BS=False` to the method.
 
 
 ### Seasonnal contribution
@@ -327,10 +375,10 @@ In order to have the contributions in `µg/m³`, which is given by `G⋅F`, we n
 both the chemical profile `F` and the contribution `G`.
 And we can easily reconstruct the time serie in `µg/m³` of each specie for every profile
 by simple multiplication of the timeserie by the concentration in the chemical profile.
-Since this is a very often computation, the method `to_cubic_metter` does just that :
+Since this is a very often computation, the method `to_cubic_meter` does just that :
 
 ```python
->>> grecb.to_cubic_metter()
+>>> grecb.to_cubic_meter()
             Sulfate-rich  Nitrate-rich  ... Biomass burning  Sea/road salt  Mineral dust
 Date                                    ...
 2017-02-28      1.415756     -0.256609  ...        0.587988       0.220859      0.367516
@@ -343,7 +391,7 @@ Date                                    ...
 
 ```
 
-Note that `to_cubic_metter` use by default the constrained run, all the profile
+Note that `to_cubic_meter` use by default the constrained run, all the profile
 and the total variable, but you can specify other conditions (see [the doc of
 this method](api.html#pyPMF.PMF.PMF.to_cubic_meter)).
 
