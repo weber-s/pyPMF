@@ -1,7 +1,7 @@
 from setuptools import setup
 from os import path
 
-VERSION = '0.1.1'
+VERSION = '0.1.2'
 
 PACKAGES = [
         'pyPMF',
@@ -25,7 +25,7 @@ setup(
     author='Samuël Weber',
     author_email='samuel.weber@univ-grenoble-alpes.fr',
     project_urls={
-        'Documentation': 'https://webersa.gricad-pages.univ-grenoble-alpes.fr/py4pm/',
+        'Documentation': 'https://pypmf.readthedocs.io',
         'Source': 'https://github.com/weber-s/pyPMF',
         },
     classifiers=[
