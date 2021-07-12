@@ -12,8 +12,6 @@
 #
 import os
 import sys
-import recommonmark
-from recommonmark.transform import AutoStructify
 import sphinx_rtd_theme
 
 sys.path.insert(0, os.path.abspath('..'))
@@ -26,7 +24,7 @@ copyright = '2019, Samuël Weber'
 author = 'Samuël Weber'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1.1'
+release = '0.1.2'
 
 
 # -- General configuration ---------------------------------------------------
@@ -39,19 +37,11 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
-    'recommonmark',
     'sphinx_rtd_theme',
-    'sphinx_markdown_tables'
 ]
-
-source_parsers = {
-    '.md': 'recommonmark.parser.CommonMarkParser',
-}
 
 source_suffix = {
     '.rst': 'restructuredtext',
-    '.txt': 'markdown',
-    '.md': 'markdown',
 }
 
 autodoc_mock_imports = ["numpy", "scipy", "pandas", "matplotlib", "seaborn"]
@@ -89,15 +79,3 @@ html_context = {
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
-
-# app setup hook
-def setup(app):
-    app.add_config_value('recommonmark_config', {
-        #'url_resolver': lambda url: github_doc_root + url,
-        'auto_toc_tree_section': 'Contents',
-        # 'enable_math': False,
-        # 'enable_inline_math': False,
-        'enable_eval_rst': True,
-        'enable_auto_doc_ref': False,
-    }, True)
-    app.add_transform(AutoStructify)

@@ -1,5 +1,5 @@
-[![Documentation Status](https://img.shields.io/badge/Documentation-API-green)](https://pypmf.readthedocs.io/)
-[![PyPI version](https://badge.fury.io/py/pyPMF.svg)](https://badge.fury.io/py/pyPMF)
+|Documentation Status|
+|PyPI version fury.io|
 
 
 Positive Matrix Factorization in python
@@ -11,14 +11,11 @@ them.
 Currently, only data from the EPA PMF5 is handle, from `xlsx` or sql database output.
 
 
-```eval_rst
 .. toctree::
     :maxdepth: 3
     
     usage
     api
-
-```
 
 History
 -------
@@ -41,3 +38,10 @@ package. It then has build in support for ploting :
  * contribution of sources to polluted and normal days
  * And a lot more!
 
+
+
+.. |Documentation Status| image:: https://readthedocs.org/projects/pypmf/badge/?version=latest
+   :target: http://pypmf.readthedocs.io/?badge=latest
+
+.. |PyPI version fury.io| image:: https://badge.fury.io/py/pyPMF.svg
+   :target: https://pypi.python.org/pypi/pyPMF/
