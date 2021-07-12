@@ -6,9 +6,9 @@ import matplotlib.ticker as mticker
 import matplotlib.colors as mcolors
 import seaborn as sns
 
-from .reader import readers
-from .plotter import plotter
-from .utils import get_sourcesCategories, add_season
+from pyPMF.reader import readers
+from pyPMF.plotter import plotter
+from pyPMF.utils import get_sourcesCategories, add_season
 
 class PMF(object):
 
