@@ -6,7 +6,7 @@ import matplotlib.ticker as mticker
 import matplotlib.colors as mcolors
 import seaborn as sns
 
-from ..utils import get_sourceColor, add_season
+from .utils import get_sourceColor, add_season
 
 def _pretty_specie(text):
     map_species = {
