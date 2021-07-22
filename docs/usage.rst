@@ -282,8 +282,8 @@ For now, the following plotters are implemented :
 - plot.plot_stacked_contribution
 - plot.plot_samples_sources_contribution
 - plot.plot_seasonal_contribution : :ref:`plot_seasonal_contribution`
-- plot.plot_all_profiles
-- plot.plot_polluted_contributions
+- plot.plot_all_profiles : :ref:`plot_all_profiles`
+- plot.plot_polluted_contributions : :ref:`plot_stacked_contribution`
 
 .. _plot_per_microgramm:
 
@@ -295,7 +295,7 @@ Chemical profile (per microgram of total variable)
    grecb.plot.plot_per_microgramm(profiles=["Primary biogenic"])
 
 .. figure:: images/plot_per_microgramm_POA.png
-   :scale: 50 %
+   :width: 100 %
    :alt: Contribution per microgramm of total specie for POA
    :align: center
 
@@ -311,28 +311,12 @@ Chemical profile (in percentage of the sum of each species)
    grecb.plot.plot_totalspeciesum(profiles=["Primary biogenic"])
 
 .. figure:: images/plot_totalspeciesum_POA.png
-   :scale: 50 %
+   :width: 100 %
    :alt: Contribution to total specie sum for POA
    :align: center
 
    Primary biogenic factor chemical profile as % of total specie sum.
 
-
-.. _plot_stacked_profiles:
-
-Chemical profile stacked (in percentage of the sum of each species)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: python
-
-   grecb.plot.plot_stacked_profiles()
-
-.. figure:: images/plot_stacked_profiles.png
-   :scale: 50 %
-   :alt: Stacked profiles
-   :align: center
-
-   Contribution of each factor to the different species
 
 .. _plot_contrib:
 
@@ -346,7 +330,7 @@ Contribution time series and uncertainties
 will produce the following graph 
 
 .. figure:: images/plot_timeseries_POA.png
-   :scale: 50 %
+   :width: 100 %
    :alt: Time series of POA
    :align: center
 
@@ -358,6 +342,26 @@ the reference run and the G matrix of the bootstrap run. As a result, the output
 "hacky" since in the bootstrap method, both the F and G matrix are changing. If you want
 to remove them, just pass ``BS=False`` to the method.
 
+
+.. _plot_all_profiles:
+
+Profiles plot summary
+~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   grecb.plot.plot_all_profiles(profiles=["Primary traffic"])
+
+will produce the following graph 
+
+.. figure:: images/plot_all_primary_traffic.png
+   :width: 100 %
+   :alt: Full Primary traffic factor (F and G matrix)
+   :align: center
+
+   Primary traffic factor description.
+
+
 .. _plot_seasonal_contribution:
 
 Seasonnal contribution
@@ -368,11 +372,65 @@ Seasonnal contribution
    grecb.plot.plot_seasonal_contribution(normalize=False, annual=False)
 
 .. figure:: images/plot_seasonnal_contribution.png
-   :scale: 50 %
+   :width: 100 %
    :alt: Seasonnal barplot contribution
    :align: center
 
    Seasonnal mean contribution of the factors to the PM mass.
+
+.. _plot_stacked_profiles:
+
+Chemical profile stacked (in percentage of the sum of each species)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   grecb.plot.plot_stacked_profiles()
+
+.. figure:: images/plot_stacked_profiles.png
+   :width: 100 %
+   :alt: Stacked profiles
+   :align: center
+
+   Contribution of each factor to the different species
+
+.. _plot_stacked_contribution:
+
+Stacked contributions
+~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   grecb.plot.plot_stacked_contribution()
+
+.. figure:: images/plot_stacked_contribution.png
+   :width: 100 %
+   :alt: Stacked contributions
+   :align: center
+
+   Stacked contribution timeseries to the PM mass.
+
+Attention : This kind of graph is often misleading due to interpolation between days.
+Therefor, I recommand not to use it... Prefere the :ref:`plot_samples_sources_contribution` one.
+
+.. _plot_samples_sources_contribution:
+
+Stacked samples contributions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   grecb.plot.plot_samples_sources_contribution()
+
+.. figure:: images/plot_samples_sources_contribution.png
+   :width: 100 %
+   :alt: Stacked samples contributions
+   :align: center
+
+   Stacked samples contribution timeseries to the PM mass.
+
+By default, the width of a bar is 1.5 day. For sampling period lower than that, 1 day is
+used.
 
 Utilities
 ---------

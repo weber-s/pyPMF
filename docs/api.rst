@@ -12,7 +12,7 @@ pyPMF.PMF module
 pyPMF.reader module
 --------------------------
 
-.. automodule:: pyPMF.reader.readers
+.. automodule:: pyPMF.readers
    :members:
    :undoc-members:
    :show-inheritance:
@@ -20,7 +20,7 @@ pyPMF.reader module
 pyPMF.plotter module
 -------------------------
 
-.. automodule:: pyPMF.plotter.plotter
+.. automodule:: pyPMF.plotter
    :members:
    :undoc-members:
    :show-inheritance:
