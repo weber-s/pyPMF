@@ -904,8 +904,22 @@ class Plotter():
 
         fig.suptitle("{}\nContribution of the sources for {}".format(self.pmf._site, specie))
 
-    def plot_samples_sources_contribution(self, constrained=True, specie=None):
+    def plot_samples_sources_contribution(self, constrained=True, specie=None,
+            savedir=None,
+            plot_save=False):
         """Plot bar plot of the contribution per sample (timeserie)
+
+        Parameters
+        ----------
+
+        constrained : boolean, True
+            Use the constrained run or the base one
+        specie : str, default to totalVar
+            Specie to use
+        savedir : str, default to self.savedir
+            Path where to save figure
+        plot_save : boolean, False
+            Save the plot as png
         """
 
         pmf = self.pmf
@@ -915,7 +929,7 @@ class Plotter():
 
         df = pmf.to_cubic_meter(specie=specie)
 
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(12, 4))
 
         self._plot_ts_stackedbarplot(df, ax=ax)
 
@@ -924,4 +938,10 @@ class Plotter():
         h, l = ax.get_legend_handles_labels()
         f.legend(h, l, loc=7, frameon=False)
 
-        plt.subplots_adjust(top=0.90, bottom=0.10, left=0.10, right=0.85)
+        ax.set_ylabel(specie)
+        fig.subplots_adjust(top=0.90, bottom=0.10, left=0.07, right=0.775)
+
+        if plot_save:
+            if savedir is None:
+                savedir = self.savedir
+            self._save_plot(DIR=savedir, name="stacked_sample_for_{}".format(specie))
