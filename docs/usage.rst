@@ -279,11 +279,11 @@ For now, the following plotters are implemented :
 - plot.plot_totalspeciesum : :ref:`plot_totalspeciesum`
 - plot.plot_stacked_profiles : :ref:`plot_stacked_profiles`
 - plot.plot_contrib : :ref:`plot_contrib`
-- plot.plot_stacked_contribution
-- plot.plot_samples_sources_contribution
-- plot.plot_seasonal_contribution : :ref:`plot_seasonal_contribution`
 - plot.plot_all_profiles : :ref:`plot_all_profiles`
-- plot.plot_polluted_contributions : :ref:`plot_stacked_contribution`
+- plot.plot_stacked_contribution : :ref:`plot_stacked_contribution`
+- plot.plot_samples_sources_contribution : :ref:`plot_samples_sources_contribution`
+- plot.plot_seasonal_contribution : :ref:`plot_seasonal_contribution`
+- plot.plot_polluted_contributions : 
 
 .. _plot_per_microgramm:
 
