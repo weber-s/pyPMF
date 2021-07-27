@@ -269,9 +269,9 @@ class PMF(object):
         for df in DF:
             if df is None:
                 continue
-            if df.index.dtypes == 'O':
+            if df.index.dtype == 'O':
                 df.rename(possible_sources, inplace=True, axis="index")
-            if df.columns.dtypes == 'O':
+            if df.columns.dtype == 'O':
                 df.rename(possible_sources, inplace=True, axis="columns")
 
         self.profiles = [possible_sources[p] for p in self.profiles]
