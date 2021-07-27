@@ -265,18 +265,17 @@ class PMF(object):
             self.df_uncertainties_summary_b,
             self.df_uncertainties_summary_c,
         ]
+        possible_sources = {p: get_sourcesCategories([p])[0] for p in self.profiles}
         for df in DF:
             if df is None:
                 continue
-            possible_sources = {
-                p: get_sourcesCategories([p])[0]
-                for p in self.profiles
-            }
-            df.rename(possible_sources, inplace=True, axis=1)
-            df.rename(possible_sources, inplace=True, axis=0)
+            if df.index.dtypes == 'O':
+                df.rename(possible_sources, inplace=True, axis="index")
+            if df.columns.dtypes == 'O':
+                df.rename(possible_sources, inplace=True, axis="columns")
 
         self.profiles = [possible_sources[p] for p in self.profiles]
-        
+
     def rename_profile(self, mapper):
         """Rename a factor profile
 
@@ -302,13 +301,7 @@ class PMF(object):
             df.rename(mapper, inplace=True, axis=1)
             df.rename(mapper, inplace=True, axis=0)
 
-        new_profiles = []
-        for p in self.profiles:
-            if p in mapper.keys():
-                new_profiles.append(mapper[p])
-            else:
-                new_profiles.append(p)
-        self.profiles = new_profiles
+        self.profiles = [mapper.get(p, p) for p in self.profiles]
 
     def recompute_new_species(self, specie):
         """Recompute a specie given the other species. For instance, recompute OC
@@ -367,7 +360,6 @@ class PMF(object):
             self.dfprofiles_b.loc[specie] = OCb.infer_objects()
             self.dfprofiles_c.loc[specie] = OCc.infer_objects()
 
-
     def print_uncertainties_summary(self, constrained=True, profiles=None,
             species=None):
         """Get the uncertainties given by BS, BS-DISP and DISP for the given profiles and
@@ -410,4 +402,3 @@ class PMF(object):
             species = self.species
 
         return df.T.loc[:, (profiles, species)]
-
