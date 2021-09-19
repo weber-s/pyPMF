@@ -510,7 +510,7 @@ class XlsxReader(BaseReader):
         idx = df.iloc[:, 0].str.contains("Specie|Concentration").astype(bool)
         df = df.drop(idx[idx].index)
         df = df.dropna(axis=0, how='all')
-        df["Profile"] = pd.np.repeat(pmf.profiles, len(pmf.species)).tolist()
+        df["Profile"] = np.repeat(pmf.profiles, len(pmf.species)).tolist()
 
         df.columns = ["Specie", "Base run", 
                 "BS 5th", "BS 25th", "BS median", "BS 75th", "BS 95th", "tmp1",
