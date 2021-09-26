@@ -806,7 +806,7 @@ class Plotter():
         
         return (df)
 
-    def plot_stacked_profiles(self, constrained=True):
+    def plot_stacked_profiles(self, constrained=True, savedir=None, plot_save=False):
         """plot the repartition of the species among the profiles, normalized to
         100%
 
@@ -814,6 +814,8 @@ class Plotter():
         ----------
         constrained : boolean, default True
             use the constrained run or not
+        plot_save : boolean, default False. Save the graph in savedir.
+        savedir : string, directory to save the plot.
 
         Returns
         -------
@@ -843,6 +845,12 @@ class Plotter():
         l = reversed(l)
         ax.legend(h, l, loc="upper left", bbox_to_anchor=(1, 1), frameon=False)
         fig.subplots_adjust(bottom=0.275, top=0.96, left=0.09, right=0.83)
+
+        if plot_save:
+            if savedir is None:
+                savedir = self.savedir
+            title = "_stacked_profiles"
+            self._save_plot(DIR=savedir, name=pmf._site+title)
 
         return ax
 
@@ -944,4 +952,4 @@ class Plotter():
         if plot_save:
             if savedir is None:
                 savedir = self.savedir
-            self._save_plot(DIR=savedir, name="stacked_sample_for_{}".format(specie))
+            self._save_plot(DIR=savedir, name="{}_stacked_sample_for_{}".format(pmf._site, specie))

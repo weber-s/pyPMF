@@ -209,6 +209,7 @@ def get_sourceColor(source=None):
         "Nitrate_rich": "#217ecb", # "#ff7f2a",
         "Nitrate rich": "#217ecb", # "#ff7f2a",
         "Secondary_inorganics": "#0000cc",
+        "Secondary inorganics": "#0000cc",
         "MSA_rich": "#ff7f2a", # 8c564b",
         "MSA-rich": "#ff7f2a", # 8c564b",
         "Secondary_oxidation": "#ff87dc",
