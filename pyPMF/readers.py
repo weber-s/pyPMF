@@ -175,6 +175,8 @@ class BaseReader(ABC):
                 getattr(self, reader)()
             except FileNotFoundError:
                 print("The file is not found for {}".format(reader))
+            except:
+                print("Unhandled errors...")
 
 
 class XlsxReader(BaseReader):
