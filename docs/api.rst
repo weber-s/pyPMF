@@ -24,3 +24,11 @@ pyPMF.plotter module
    :members:
    :undoc-members:
    :show-inheritance:
+
+pyPMF.utils module
+-------------------------
+
+.. automodule:: pyPMF.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
