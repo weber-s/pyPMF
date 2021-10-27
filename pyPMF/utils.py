@@ -7,24 +7,56 @@ def add_season(df, month=True, month_to_season=None):
     """
     Add a season column to the DataFrame df.
 
-    parameters
+    df must have either a `Date` column or an named index `Date`
+
+    Parameters
     ----------
 
-    df: Pandas DataFrame.
+    df: pd.DataFrame
         The DataFrame to work with.
-    month : add month number, default True
+    month : Boolean (True)
+        Add month number
+    month_to_season: dict, optional (None)
+        Dictionary mapping between month number to season name. Default to
 
-    return
-    ------
+            month_to_season = {
+                1: "Winter",
+                2: "Winter",
+                3: "Spring",
+                4: "Spring",
+                5: "Spring",
+                6: "Summer",
+                7: "Summer",
+                8: "Summer",
+                9: "Fall",
+                10: "Fall",
+                11: "Fall",
+                12: "Winter",
+            }
 
-    dfnew: a new pandas DataFrame with a 'season' columns.
+    Returns
+    -------
+
+    dfnew: pd.DataFrame
+        Copy of input dataframe with a 'season' (and 'month') columns.
 
     """
 
     if month_to_season is None:
-        month_to_season = {1:'Winter', 2:'Winter', 3:'Spring', 4:'Spring', 5:'Spring', 6:'Summer',
-                           7:'Summer', 8:'Summer', 9:'Fall', 10:'Fall', 11:'Fall',
-                           12:'Winter'}
+        month_to_season = {
+            1: "Winter",
+            2: "Winter",
+            3: "Spring",
+            4: "Spring",
+            5: "Spring",
+            6: "Summer",
+            7: "Summer",
+            8: "Summer",
+            9: "Fall",
+            10: "Fall",
+            11: "Fall",
+            12: "Winter",
+        }
 
     dfnew = df.copy()
 
@@ -32,7 +64,7 @@ def add_season(df, month=True, month_to_season=None):
     if "Date" in dfnew.index.names:
         dfnew["Date"] = dfnew.index.get_level_values("Date")
         dropDate = True
-    elif 'Date' in dfnew.columns:
+    elif "Date" in dfnew.columns:
         dfnew["Date"] = pd.to_datetime(dfnew["Date"])
         dropDate = False
     else:
@@ -52,16 +84,23 @@ def add_season(df, month=True, month_to_season=None):
     if dropDate:
         dfnew.drop(columns=["Date"], inplace=True)
 
-    # and return the new dataframe
     return dfnew
+
 
 def get_sourcesCategories(profiles):
     """Get the sources category according to the sources name.
 
     Ex. Aged sea salt → Aged_sea_salt
 
-    :profiles: list
-    :returns: list
+    Parameters
+    ----------
+
+    profiles: list of str
+    
+    Returns
+    -------
+
+    profiles_renamed : list of str
 
     """
     possible_sources = {
@@ -109,7 +148,7 @@ def get_sourcesCategories(profiles):
         # "Marine SOA": "Marine SOA",
         "Marine SOA": "MSA_rich",
         "MSA_rich": "MSA_rich",
-        "MSA-rich": "MSA-rich",
+        "MSA-rich": "MSA_rich",
         "MSA rich": "MSA_rich",
         "Secondary biogenic/sulfate": "SOA/sulfate (Mix)",
         "Marine SOA/SO4": "SOA/sulfate (Mix)",
@@ -167,21 +206,28 @@ def get_sourcesCategories(profiles):
         "Débris végétaux": "Plant_debris",
         "Chlorure": "Chloride",
         "PM other": "Other",
-        "Undetermined": "Undertermined"
-        }
-    s = [possible_sources[k] for k in profiles]
+        "Undetermined": "Undertermined",
+    }
+    s = [possible_sources.get(k, k) for k in profiles]
     return s
 
+
 def get_sourceColor(source=None):
-    """Return the hexadecimal color of the source(s) 
+    """Return the hexadecimal color of the source(s)
 
     If no option, then return the whole dictionary
-    
-    Optional Parameters
-    ===================
+
+    Parameters
+    ----------
 
     source : str
         The name of the source
+
+    Returns
+    -------
+
+    color : str or pd.DataFrame
+        color in hexadecimal
     """
     color = {
         "Traffic": "#000000",
@@ -205,21 +251,21 @@ def get_sourceColor(source=None):
         "Sulfate-rich": "#ff2a2a",
         "Sulfate_rich": "#ff2a2a",
         "Sulfate rich": "#ff2a2a",
-        "Nitrate-rich": "#217ecb", # "#ff7f2a",
-        "Nitrate_rich": "#217ecb", # "#ff7f2a",
-        "Nitrate rich": "#217ecb", # "#ff7f2a",
+        "Nitrate-rich": "#217ecb",  # "#ff7f2a",
+        "Nitrate_rich": "#217ecb",  # "#ff7f2a",
+        "Nitrate rich": "#217ecb",  # "#ff7f2a",
         "Secondary_inorganics": "#0000cc",
         "Secondary inorganics": "#0000cc",
-        "MSA_rich": "#ff7f2a", # 8c564b",
-        "MSA-rich": "#ff7f2a", # 8c564b",
+        "MSA_rich": "#ff7f2a",  # 8c564b",
+        "MSA-rich": "#ff7f2a",  # 8c564b",
         "Secondary_oxidation": "#ff87dc",
         "Secondary_biogenic_oxidation": "#ff87dc",
         "Secondary oxidation": "#ff87dc",
         "Secondary biogenic oxidation": "#ff87dc",
-        "Marine SOA": "#ff7f2a", # 8c564b",
+        "Marine SOA": "#ff7f2a",  # 8c564b",
         "Biogenic SOA": "#8c564b",
         "Anthropogenic SOA": "#8c564b",
-        "Marine/HFO": "#a37f15", #8c564b",
+        "Marine/HFO": "#a37f15",  # 8c564b",
         "Aged seasalt/HFO": "#8c564b",
         "Marine_biogenic": "#fc564b",
         "HFO": "#70564b",
@@ -235,9 +281,9 @@ def get_sourceColor(source=None):
         "Sea/road salt": "#209ecc",
         "Fresh sea salt": "#00b0f0",
         "Fresh seasalt": "#00b0f0",
-        "Aged_salt": "#97bdff", #00b0f0",
-        "Aged seasalt": "#97bdff", #00b0f0",
-        "Aged sea salt": "#97bdff", #00b0f0",
+        "Aged_salt": "#97bdff",  # 00b0f0",
+        "Aged seasalt": "#97bdff",  # 00b0f0",
+        "Aged sea salt": "#97bdff",  # 00b0f0",
         "Fungal spores": "#ffc000",
         "Primary_biogenic": "#ffc000",
         "Primary biogenic": "#ffc000",
@@ -249,7 +295,7 @@ def get_sourceColor(source=None):
         "Industrial": "#7030a0",
         "Industries": "#7030a0",
         "Indus/veh": "#5c304b",
-        "Industry/traffic": "#5c304b", #7030a0",
+        "Industry/traffic": "#5c304b",  # 7030a0",
         "Arcellor": "#7030a0",
         "Siderurgie": "#7030a0",
         "Plant debris": "#2aff80",
@@ -261,7 +307,7 @@ def get_sourceColor(source=None):
         "SOA/sulfate (Mix)": "#6c362b",
         "Sulfate rich/HFO": "#8c56b4",
         "nan": "#ffffff",
-        "Undetermined": "#666"
+        "Undetermined": "#666",
     }
     color = pd.DataFrame(index=["color"], data=color)
     if source:
@@ -276,7 +322,11 @@ def get_sourceColor(source=None):
 def format_xaxis_timeseries(ax):
     """Format the x-axis timeseries with minortick = month and majortick=year
 
-    :ax: the ax to format
+    Parameters
+    ----------
+
+    ax: mpl.axes
+        The axe to format
 
     """
     ax.xaxis.set_major_locator(mdates.YearLocator())

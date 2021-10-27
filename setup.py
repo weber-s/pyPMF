@@ -1,7 +1,7 @@
 from setuptools import setup
 from os import path
 
-VERSION = '0.1.11'
+VERSION = '0.1.12'
 
 PACKAGES = [
         'pyPMF',
@@ -21,9 +21,9 @@ setup(
     long_description_content_type='text/markdown',
     url='https://github.com/weber-s/pyPMF',
     install_requires=['pandas', 'xlrd<2', 'matplotlib', 'seaborn'],
-    python_requires='>=3',
+    python_requires='>=3.7',
     author='Samuël Weber',
-    author_email='samuel.weber@univ-grenoble-alpes.fr',
+    author_email='samuel.weber@normalesup.org',
     project_urls={
         'Documentation': 'https://pypmf.readthedocs.io',
         'Source': 'https://github.com/weber-s/pyPMF',
