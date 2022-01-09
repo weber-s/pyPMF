@@ -1,3 +1,4 @@
+import warnings
 import numpy as np
 import pandas as pd
 from matplotlib.gridspec import GridSpec
@@ -670,8 +671,9 @@ class Plotter():
                     name=pmf._site+"_"+p+"_contribution_and_profiles"
                 )
 
-    def plot_stacked_contribution(self, constrained=True, order=None, plot_kwargs=None):
-        """Plot a stacked plot for the contribution
+    def plot_stacked_contributions(self, constrained=True, order=None, plot_kwargs=None,
+            savedir=None, plot_save=False):
+        """Plot a stacked plot for the contributions
 
         Parameters
         ----------
@@ -679,7 +681,10 @@ class Plotter():
         constrained : TODO
         order : TODO
         plot_kwargs : TODO
-
+        plot_save : boolean, default False
+            Either or not saving the plot
+        savedir : str
+            Path to save the plot
         """
         pmf = self.pmf
 
@@ -710,7 +715,14 @@ class Plotter():
             wspace=0.2
         )
 
-    def plot_seasonal_contribution(self, constrained=True, dfcontrib=None, dfprofiles=None, profiles=None,
+    def plot_seasonal_contribution(self, *args, **kwargs):
+        warnings.warn(
+            "plot_seasonal_contribution is deprecated, use plot_seasonal_contributions instead (plural)",
+            PendingDeprecationWarning
+        )
+        self.plot_seasonal_contributions(*args, **kwargs)
+
+    def plot_seasonal_contributions(self, constrained=True, dfcontrib=None, dfprofiles=None, profiles=None,
             specie=None, plot_save=False, savedir=None, annual=True,
             normalize=True, ax=None, barplot_kwarg={}):
         """Plot the relative contribution of the profiles.
@@ -855,7 +867,7 @@ class Plotter():
         return ax
 
     def plot_polluted_contribution(self, constrained=True, threshold=None, specie=None,
-            normalize=True):
+            normalize=True, plot_save=False, savedir=None):
         """Plot a barplot splited by polluted/non-polluted days defined by the threshold
         given.
 
@@ -869,6 +881,8 @@ class Plotter():
             specie to use
         normalize : boolean, default True
             normalized the graph
+        plot_save : boolean, default False. Save the graph in savedir.
+        savedir : string, directory to save the plot.
 
         """
         if specie is None:
@@ -912,9 +926,12 @@ class Plotter():
 
         fig.suptitle("{}\nContribution of the sources for {}".format(self.pmf._site, specie))
 
+        if plot_save:
+            title = "_polluted_contributions_{}_threshold_{}".format(specie, threshold)
+            self._save_plot(DIR=savedir, name=pmf._site+title)
+
     def plot_samples_sources_contribution(self, constrained=True, specie=None,
-            savedir=None,
-            plot_save=False):
+            savedir=None, plot_save=False):
         """Plot bar plot of the contribution per sample (timeserie)
 
         Parameters
