@@ -302,6 +302,7 @@ def get_sourceColor(source=None):
         "Plant_debris": "#2aff80",
         "Débris végétaux": "#2aff80",
         "Choride": "#80e5ff",
+        "Cl-rich": "#80e5ff",
         "PM other": "#cccccc",
         "Traffic/dust (Mix)": "#333333",
         "SOA/sulfate (Mix)": "#6c362b",

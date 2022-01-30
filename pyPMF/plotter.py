@@ -442,7 +442,8 @@ class Plotter():
             self._plot_per_microgramm(df=df, constrained=constrained, profile=p, species=species,
                                       new_figure=True)
             plt.subplots_adjust(left=0.1, right=0.9, bottom=0.3, top=0.9)
-            if plot_save: self._save_plot(DIR=savedir, name=p+"_profile_perµg")
+            if plot_save:
+                self._save_plot(DIR=savedir, name=p+"_profile_perµg")
 
     def plot_totalspeciesum(self, df=None, profiles=None, species=None, constrained=True,
                             plot_save=False, savedir=None, **kwargs):
@@ -715,6 +716,12 @@ class Plotter():
             wspace=0.2
         )
 
+        if plot_save:
+            self._save_plot(
+                DIR=savedir,
+                name=pmf._site+"_stacked_contributions"
+            )
+
     def plot_seasonal_contribution(self, *args, **kwargs):
         warnings.warn(
             "plot_seasonal_contribution is deprecated, use plot_seasonal_contributions instead (plural)",
@@ -811,8 +818,10 @@ class Plotter():
         plt.subplots_adjust(top=0.90, bottom=0.10, left=0.15, right=0.72)
         
         if plot_save:
-            title = "_seasonal_contribution_{}".format(
-                    "normalized" if normalize else "absolute"
+            title = "_seasonal_contribution_{specie}_{normalize}{annual}".format(
+                    specie=specie,
+                    normalize="normalized" if normalize else "absolute",
+                    annual="_with_annual" if annual else ""
                     )
             self._save_plot(DIR=savedir, name=pmf._site+title)
         
@@ -963,8 +972,8 @@ class Plotter():
         h, l = ax.get_legend_handles_labels()
         f.legend(h, l, loc=7, frameon=False)
 
-        ax.set_ylabel(specie)
-        fig.subplots_adjust(top=0.90, bottom=0.10, left=0.07, right=0.775)
+        ax.set_ylabel(f"{specie} (µg m⁻³)")
+        fig.subplots_adjust(top=0.90, bottom=0.10, left=0.10, right=0.775)
 
         if plot_save:
             if savedir is None:

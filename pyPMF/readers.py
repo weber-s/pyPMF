@@ -176,7 +176,7 @@ class BaseReader(ABC):
             except FileNotFoundError:
                 print("The file is not found for {}".format(reader))
             except Exception as a:
-                raise Exception(f"Error while reading {reader}")
+                raise Exception(f"Error while reading {reader}: {a}")
 
 
 class XlsxReader(BaseReader):
